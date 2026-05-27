@@ -22,8 +22,8 @@ export default function Home() {
         <div className="flex items-center gap-4 animate-fade-in">
           <img 
             src="/logo.png"
-            alt="Paesani Logo" 
-            className="w-16 h-16 object-contain shrink-0"
+            alt="Paesani Logo"
+            className="w-16 h-16 object-contain shrink-0 mix-blend-screen"
           />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
