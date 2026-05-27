@@ -20,10 +20,18 @@ export default function Home() {
       <div className="flex-1 flex flex-col justify-between p-8 md:p-16 lg:p-24 relative z-10 max-w-2xl lg:max-w-3xl">
         {/* Logo and Brand Badge */}
         <div className="flex items-center gap-4 animate-fade-in">
-          <img 
-            src="/logo.png"
-            alt="Paesani Logo"
-            className="w-16 h-16 object-contain shrink-0 [clip-path:circle(50%)]"
+          <div
+            className="w-16 h-16 shrink-0"
+            role="img"
+            aria-label="Paesani Logo"
+            style={{
+              backgroundImage: 'url(/logo.png)',
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              backgroundColor: '#060E1F',
+              backgroundBlendMode: 'screen',
+            }}
           />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
