@@ -23,7 +23,7 @@ export default function Home() {
           <img 
             src="/logo.png"
             alt="Paesani Logo"
-            className="w-16 h-16 object-contain shrink-0 mix-blend-screen"
+            className="w-16 h-16 object-contain shrink-0 [clip-path:circle(50%)]"
           />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
