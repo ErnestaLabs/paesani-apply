@@ -1,15 +1,9 @@
-import { useEffect } from "react";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export default function Home() {
-  useEffect(() => {
-    if ((window as any).tf) {
-      (window as any).tf.load();
-    }
-  }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto">
+    <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
       {/* Viewport Gold Frame (Editorial Aesthetic) */}
       <div className="absolute inset-0 border-[8px] md:border-[16px] border-[#060E1F] pointer-events-none z-50">
         <div className="w-full h-full border border-amber-500/10 pointer-events-none" />
@@ -85,8 +79,9 @@ export default function Home() {
           {/* Primary CTA (Launches Typeform Modal) */}
           <div className="mt-4">
             <a
-              href="#apply-form"
-              onClick={(e) => { e.preventDefault(); document.getElementById('apply-form')?.scrollIntoView({ behavior: 'smooth' }); }}
+              href="https://form.typeform.com/to/Zb6esxWx"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer no-underline"
             >
               See If You Qualify
@@ -118,9 +113,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Column: Typeform Live Embed */}
-      <div id="apply-form" className="flex-1 min-h-[600px] md:min-h-screen bg-slate-900">
-        <div data-tf-live="01KQR0HAC8MXPZ5EC7GE3HEXPW" style={{ width: '100%', height: '100%', minHeight: '600px' }} />
+      {/* Right Column: Visual Academic Hero */}
+      <div className="hidden md:block flex-1 relative min-h-screen bg-slate-900 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#060E1F] via-transparent to-transparent z-10 w-1/3" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#060E1F]/80 z-10" />
+        <img
+          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663101347649/nUEGTEn9yRZ3J2wLy6iuiv/paesani_academic_hero-etDzUHtGBDmpmeBSPh8X9K.webp"
+          alt="Paesani Student Advisory"
+          className="w-full h-full object-cover object-center scale-105 hover:scale-100 transition-transform duration-[4000ms] ease-out"
+        />
       </div>
     </div>
   );
