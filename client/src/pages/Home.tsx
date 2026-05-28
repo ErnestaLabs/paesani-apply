@@ -21,10 +21,18 @@ export default function Home() {
       <div className="flex-1 flex flex-col justify-between p-8 md:p-16 lg:p-24 relative z-10 max-w-2xl lg:max-w-3xl">
         {/* Logo and Brand Badge */}
         <div className="flex items-center gap-4 animate-fade-in">
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663101347649/nUEGTEn9yRZ3J2wLy6iuiv/paesani-logo-transparent_6b53f10f-6N86jP0Y7U.png"
-            alt="Paesani Logo"
-            className="w-16 h-16 object-contain shrink-0"
+          <div
+            className="w-16 h-16 shrink-0"
+            role="img"
+            aria-label="Paesani Logo"
+            style={{
+              backgroundImage: 'url(/logo.png)',
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              backgroundColor: '#060E1F',
+              backgroundBlendMode: 'screen',
+            }}
           />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -113,14 +121,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Column: Visual Academic Hero (Hidden on mobile) */}
-      <div className="hidden md:block flex-1 relative min-h-screen bg-slate-900 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060E1F] via-transparent to-transparent z-10 w-1/3" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#060E1F]/80 z-10" />
-        <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663101347649/nUEGTEn9yRZ3J2wLy6iuiv/paesani_academic_hero-etDzUHtGBDmpmeBSPh8X9K.webp"
-          alt="Paesani Student Advisory"
-          className="w-full h-full object-cover object-center scale-105 hover:scale-100 transition-transform duration-[4000ms] ease-out"
+      {/* Right Column: Convocore Widget (Hidden on mobile) */}
+      <div className="hidden md:block flex-1 relative min-h-screen bg-[#060E1F] overflow-hidden">
+        <iframe
+          src="https://convocore.ai/app/eu/render/kwrBxawDy7WuG8G7vpu7/iframe"
+          style={{ width: '100%', height: '100vh' }}
+          frameBorder="0"
+          title="Paesani Advisor"
         />
       </div>
     </div>
