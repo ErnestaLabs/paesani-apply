@@ -10,58 +10,60 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const voice = new WebCall();
-        await voice.init({ agentId: "kwrBxawDy7WuG8G7vpu7", region: "eu" });
-
-        voice.on("call-start", () => {
-          if (!cancelled) setCallState("live");
-        });
-        voice.on("call-ended", () => {
-          if (!cancelled) setCallState("idle");
-        });
-        voice.on("error", (data: any) => {
-          if (cancelled) return;
-          console.error("Voice error:", data);
-          setErrorMsg("Call failed. Please try again or use WhatsApp.");
-          setCallState("idle");
-        });
-
-        if (!cancelled) voiceRef.current = voice;
-      } catch (err) {
-        console.error("Voice init failed:", err);
-        if (!cancelled) setErrorMsg("Voice unavailable. Please refresh.");
-      }
-    })();
-
     return () => {
-      cancelled = true;
       try {
         voiceRef.current?.endCall?.();
       } catch {}
     };
   }, []);
 
+  const ensureVoice = async (): Promise<WebCall> => {
+    if (voiceRef.current) return voiceRef.current;
+    console.log("[voice] Constructing WebCall…");
+    const voice = new WebCall();
+
+    voice.on("call-start", () => {
+      console.log("[voice] call-start");
+      setCallState("live");
+    });
+    voice.on("call-ended", () => {
+      console.log("[voice] call-ended");
+      setCallState("idle");
+    });
+    voice.on("error", (data: any) => {
+      console.error("[voice] error event:", data);
+      const msg = (data && (data.message || data.error || JSON.stringify(data))) || "unknown error";
+      setErrorMsg(`Voice error: ${msg}`);
+      setCallState("idle");
+    });
+    voice.on("final_transcript", (data: any) => console.log("[voice] final_transcript", data));
+    voice.on("conversation-update", (data: any) => console.log("[voice] conversation-update", data));
+
+    console.log("[voice] init({ agentId: kwrBxawDy7WuG8G7vpu7, region: eu })…");
+    await voice.init({ agentId: "kwrBxawDy7WuG8G7vpu7", region: "eu" });
+    console.log("[voice] init complete");
+    voiceRef.current = voice;
+    return voice;
+  };
+
   const handleClick = async () => {
     setErrorMsg(null);
-    const voice = voiceRef.current;
-    if (!voice) {
-      setErrorMsg("Voice not ready yet. One moment…");
-      return;
-    }
     try {
-      if (callState === "idle") {
-        setCallState("connecting");
-        await voice.startCall();
-      } else if (callState === "live") {
+      if (callState === "live") {
         setCallState("ending");
-        await voice.endCall();
+        console.log("[voice] endCall()…");
+        await voiceRef.current?.endCall();
+        return;
       }
-    } catch (err) {
-      console.error("Call action failed:", err);
-      setErrorMsg("Call failed. Please try again.");
+      setCallState("connecting");
+      const voice = await ensureVoice();
+      console.log("[voice] startCall()…");
+      await voice.startCall();
+      console.log("[voice] startCall resolved");
+    } catch (err: any) {
+      console.error("[voice] handleClick error:", err);
+      const msg = err?.message || err?.toString?.() || "unknown";
+      setErrorMsg(`Call failed: ${msg}`);
       setCallState("idle");
     }
   };
