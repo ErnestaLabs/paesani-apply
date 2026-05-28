@@ -121,12 +121,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Column: Convocore Widget (Hidden on mobile) */}
-      <div className="hidden md:block flex-1 relative min-h-screen bg-[#060E1F] overflow-hidden">
+      {/* Right Column: Convocore Widget (Visible on all devices — primary CTA) */}
+      <div className="flex-1 relative h-[600px] md:h-screen bg-[#060E1F] overflow-hidden">
         <iframe
           src="https://convocore.ai/app/eu/render/kwrBxawDy7WuG8G7vpu7/iframe"
-          style={{ width: '100%', height: '100vh' }}
-          frameBorder="0"
+          style={{ width: '100%', height: '100%', display: 'block', border: 0 }}
           title="Paesani Advisor"
         />
       </div>
