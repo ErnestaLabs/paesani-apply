@@ -3,14 +3,13 @@ import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   useEffect(() => {
-    // Ensure the Typeform embed script initializes if already loaded on mount
-    if (window.window && (window as any).Typeform) {
-      (window as any).Typeform.load();
+    if ((window as any).tf) {
+      (window as any).tf.load();
     }
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
+    <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto">
       {/* Viewport Gold Frame (Editorial Aesthetic) */}
       <div className="absolute inset-0 border-[8px] md:border-[16px] border-[#060E1F] pointer-events-none z-50">
         <div className="w-full h-full border border-amber-500/10 pointer-events-none" />
@@ -85,19 +84,14 @@ export default function Home() {
 
           {/* Primary CTA (Launches Typeform Modal) */}
           <div className="mt-4">
-            <button
-              data-tf-popup="Zb6esxWx"
-              data-tf-opacity="100"
-              data-tf-size="100"
-              data-tf-iframe-props="title=Paesani Multi-Course Lead Form"
-              data-tf-transitive-search-params=""
-              data-tf-medium="snippet"
-              data-tf-redirect-on-submit="https://paesani.co.uk"
-              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
+            <a
+              href="#apply-form"
+              onClick={(e) => { e.preventDefault(); document.getElementById('apply-form')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer no-underline"
             >
               See If You Qualify
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </a>
             <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-500/60" />
               Takes only 2 minutes • Completely free advisory
@@ -124,18 +118,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Column: Visual Academic Hero (Hidden on mobile to preserve single-screen density) */}
-      <div className="hidden md:block flex-1 relative min-h-screen bg-slate-900 overflow-hidden">
-        {/* Editorial overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060E1F] via-transparent to-transparent z-10 w-1/3" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#060E1F]/80 z-10" />
-        
-        {/* High-quality generated background image */}
-        <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663101347649/nUEGTEn9yRZ3J2wLy6iuiv/paesani_academic_hero-etDzUHtGBDmpmeBSPh8X9K.webp"
-          alt="Paesani Student Advisory"
-          className="w-full h-full object-cover object-center scale-105 hover:scale-100 transition-transform duration-[4000ms] ease-out"
-        />
+      {/* Right Column: Typeform Live Embed */}
+      <div id="apply-form" className="flex-1 min-h-[600px] md:min-h-screen bg-slate-900">
+        <div data-tf-live="01KQR0HAC8MXPZ5EC7GE3HEXPW" style={{ width: '100%', height: '100%', minHeight: '600px' }} />
       </div>
     </div>
   );
