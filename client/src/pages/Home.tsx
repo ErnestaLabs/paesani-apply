@@ -1,6 +1,14 @@
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { PopupButton } from "@typeform/embed-react";
 
 export default function Home() {
+  const handleFormSubmit = (event: any) => {
+    console.log("Form submitted! Intercepting response ID:", event.responseId);
+    const phoneNumber = "447438202623";
+    const text = "Hi Paesani, I just completed the eligibility form!";
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+    window.location.href = whatsappUrl;
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
@@ -13,18 +21,10 @@ export default function Home() {
       <div className="flex-1 flex flex-col justify-between p-8 md:p-16 lg:p-24 relative z-10 max-w-2xl lg:max-w-3xl">
         {/* Logo and Brand Badge */}
         <div className="flex items-center gap-4 animate-fade-in">
-          <div
-            className="w-16 h-16 shrink-0"
-            role="img"
-            aria-label="Paesani Logo"
-            style={{
-              backgroundImage: 'url(/logo.png)',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundColor: '#060E1F',
-              backgroundBlendMode: 'screen',
-            }}
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663101347649/nUEGTEn9yRZ3J2wLy6iuiv/paesani-logo-transparent_6b53f10f-6N86jP0Y7U.png"
+            alt="Paesani Logo"
+            className="w-16 h-16 object-contain shrink-0"
           />
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -76,28 +76,17 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Primary CTA (Launches Typeform Modal) */}
+          {/* Primary CTA Button */}
           <div className="mt-4">
-            <button
-              onClick={() => {
-                const popup = (window as any).Typeform.createPopup('I4K8suXl', {
-                  size: 100,
-                  iframeProps: { title: 'Paesani Multi-Course Lead Form' },
-                  onSubmit: (event: any) => {
-                    console.log('Form submitted successfully! Response ID:', event.responseId);
-                    const phoneNumber = '447438202623';
-                    const message = encodeURIComponent("Hi Paesani, I just completed the eligibility form!");
-                    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-                    window.location.href = whatsappUrl;
-                  },
-                });
-                popup.open();
-              }}
+            <PopupButton
+              id="I4K8suXl"
+              size={100}
+              onSubmit={handleFormSubmit}
               className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
             >
               See If You Qualify
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </PopupButton>
             <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-500/60" />
               Takes only 2 minutes • Completely free advisory
@@ -124,7 +113,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right Column: Visual Academic Hero */}
+      {/* Right Column: Visual Academic Hero (Hidden on mobile) */}
       <div className="hidden md:block flex-1 relative min-h-screen bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#060E1F] via-transparent to-transparent z-10 w-1/3" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#060E1F]/80 z-10" />
