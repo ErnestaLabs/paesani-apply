@@ -80,17 +80,18 @@ export default function Home() {
           <div className="mt-4">
             <button
               onClick={() => {
-                const tf = (window as any).tf || (window as any).Typeform;
-                const whatsappUrl = `https://wa.me/447438202623?text=${encodeURIComponent('Hi Paesani, I just completed the eligibility form!')}`;
-                const { open, close } = tf.createPopup('I4K8suXl', {
+                const popup = (window as any).Typeform.createPopup('I4K8suXl', {
                   size: 100,
                   iframeProps: { title: 'Paesani Multi-Course Lead Form' },
-                  onSubmit: () => {
-                    close();
-                    setTimeout(() => { window.location.href = whatsappUrl; }, 300);
+                  onSubmit: (event: any) => {
+                    console.log('Form submitted successfully! Response ID:', event.responseId);
+                    const phoneNumber = '447438202623';
+                    const message = encodeURIComponent("Hi Paesani, I just completed the eligibility form!");
+                    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+                    window.location.href = whatsappUrl;
                   },
                 });
-                open();
+                popup.open();
               }}
               className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
             >
