@@ -78,15 +78,23 @@ export default function Home() {
 
           {/* Primary CTA (Launches Typeform Modal) */}
           <div className="mt-4">
-            <a
-              href="https://form.typeform.com/to/I4K8suXl"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer no-underline"
+            <button
+              onClick={() => {
+                const popup = (window as any).Typeform.createPopup('I4K8suXl', {
+                  size: 100,
+                  iframeProps: { title: 'Paesani Multi-Course Lead Form' },
+                  onSubmit: () => {
+                    const whatsappUrl = `https://wa.me/447438202623?text=${encodeURIComponent('Hi Paesani, I just completed the eligibility form!')}`;
+                    window.location.href = whatsappUrl;
+                  },
+                });
+                popup.open();
+              }}
+              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
             >
               See If You Qualify
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </a>
+            </button>
             <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-500/60" />
               Takes only 2 minutes • Completely free advisory
