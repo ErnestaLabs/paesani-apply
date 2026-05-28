@@ -1,75 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, ShieldCheck, Phone, PhoneOff, Loader2 } from "lucide-react";
-import { WebCall } from "@tixae-labs/web-sdk";
-
-type CallState = "idle" | "connecting" | "live" | "ending";
+import { ArrowRight, CheckCircle2, ShieldCheck, MessageCircle } from "lucide-react";
 
 export default function Home() {
-  const voiceRef = useRef<WebCall | null>(null);
-  const [callState, setCallState] = useState<CallState>("idle");
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      try {
-        voiceRef.current?.endCall?.();
-      } catch {}
-    };
-  }, []);
-
-  const ensureVoice = async (): Promise<WebCall> => {
-    if (voiceRef.current) return voiceRef.current;
-    console.log("[voice] Constructing WebCall…");
-    const voice = new WebCall();
-
-    voice.on("call-start", () => {
-      console.log("[voice] call-start");
-      setCallState("live");
-    });
-    voice.on("call-ended", () => {
-      console.log("[voice] call-ended");
-      setCallState("idle");
-    });
-    voice.on("error", (data: any) => {
-      console.error("[voice] error event:", data);
-      const msg = (data && (data.message || data.error || JSON.stringify(data))) || "unknown error";
-      setErrorMsg(`Voice error: ${msg}`);
-      setCallState("idle");
-    });
-    voice.on("final_transcript", (data: any) => console.log("[voice] final_transcript", data));
-    voice.on("conversation-update", (data: any) => console.log("[voice] conversation-update", data));
-
-    console.log("[voice] init({ agentId: kwrBxawDy7WuG8G7vpu7, region: eu })…");
-    await voice.init({ agentId: "kwrBxawDy7WuG8G7vpu7", region: "eu" });
-    console.log("[voice] init complete");
-    voiceRef.current = voice;
-    return voice;
+  const handleClick = () => {
+    const phoneNumber = "447438202623";
+    const text = "Hi Paesani, I'd like to speak to an advisor about my eligibility!";
+    window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
   };
-
-  const handleClick = async () => {
-    setErrorMsg(null);
-    try {
-      if (callState === "live") {
-        setCallState("ending");
-        console.log("[voice] endCall()…");
-        await voiceRef.current?.endCall();
-        return;
-      }
-      setCallState("connecting");
-      const voice = await ensureVoice();
-      console.log("[voice] startCall()…");
-      await voice.startCall();
-      console.log("[voice] startCall resolved");
-    } catch (err: any) {
-      console.error("[voice] handleClick error:", err);
-      const msg = err?.message || err?.toString?.() || "unknown";
-      setErrorMsg(`Call failed: ${msg}`);
-      setCallState("idle");
-    }
-  };
-
-  const isLive = callState === "live";
-  const isBusy = callState === "connecting" || callState === "ending";
 
   return (
     <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
@@ -140,49 +76,20 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Primary CTA — Voice Call */}
+          {/* Primary CTA — WhatsApp Redirect */}
           <div className="mt-4">
             <button
               onClick={handleClick}
-              disabled={isBusy}
-              className={`group inline-flex items-center justify-center gap-3 font-bold px-8 py-4 rounded-lg shadow-lg transition-all duration-200 text-base md:text-lg cursor-pointer disabled:cursor-wait disabled:opacity-80 ${
-                isLive
-                  ? "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white shadow-red-500/20 hover:shadow-red-500/30"
-                  : "bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]"
-              }`}
+              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
             >
-              {callState === "connecting" && (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Connecting…
-                </>
-              )}
-              {callState === "ending" && (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Ending…
-                </>
-              )}
-              {callState === "live" && (
-                <>
-                  <PhoneOff className="w-5 h-5" />
-                  End Call
-                </>
-              )}
-              {callState === "idle" && (
-                <>
-                  <Phone className="w-5 h-5 transition-transform group-hover:rotate-12" />
-                  Talk To An Advisor Now
-                </>
-              )}
+              <MessageCircle className="w-5 h-5" />
+              Talk To An Advisor Now
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </button>
             <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-500/60" />
-              Free 2-minute eligibility call • No commitment
+              Instant WhatsApp chat • Free eligibility check
             </p>
-            {errorMsg && (
-              <p className="text-xs text-red-400 mt-2">{errorMsg}</p>
-            )}
           </div>
         </div>
 
