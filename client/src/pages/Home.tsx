@@ -1,14 +1,73 @@
-import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
-import { PopupButton } from "@typeform/embed-react";
+import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, ShieldCheck, Phone, PhoneOff, Loader2 } from "lucide-react";
+import { WebCall } from "@tixae-labs/web-sdk";
+
+type CallState = "idle" | "connecting" | "live" | "ending";
 
 export default function Home() {
-  const handleFormSubmit = (event: any) => {
-    console.log("Form submitted! Intercepting response ID:", event.responseId);
-    const phoneNumber = "447438202623";
-    const text = "Hi Paesani, I just completed the eligibility form!";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-    window.location.href = whatsappUrl;
+  const voiceRef = useRef<WebCall | null>(null);
+  const [callState, setCallState] = useState<CallState>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const voice = new WebCall();
+        await voice.init({ agentId: "kwrBxawDy7WuG8G7vpu7", region: "eu" });
+
+        voice.on("call-start", () => {
+          if (!cancelled) setCallState("live");
+        });
+        voice.on("call-ended", () => {
+          if (!cancelled) setCallState("idle");
+        });
+        voice.on("error", (data: any) => {
+          if (cancelled) return;
+          console.error("Voice error:", data);
+          setErrorMsg("Call failed. Please try again or use WhatsApp.");
+          setCallState("idle");
+        });
+
+        if (!cancelled) voiceRef.current = voice;
+      } catch (err) {
+        console.error("Voice init failed:", err);
+        if (!cancelled) setErrorMsg("Voice unavailable. Please refresh.");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      try {
+        voiceRef.current?.endCall?.();
+      } catch {}
+    };
+  }, []);
+
+  const handleClick = async () => {
+    setErrorMsg(null);
+    const voice = voiceRef.current;
+    if (!voice) {
+      setErrorMsg("Voice not ready yet. One moment…");
+      return;
+    }
+    try {
+      if (callState === "idle") {
+        setCallState("connecting");
+        await voice.startCall();
+      } else if (callState === "live") {
+        setCallState("ending");
+        await voice.endCall();
+      }
+    } catch (err) {
+      console.error("Call action failed:", err);
+      setErrorMsg("Call failed. Please try again.");
+      setCallState("idle");
+    }
   };
+
+  const isLive = callState === "live";
+  const isBusy = callState === "connecting" || callState === "ending";
 
   return (
     <div className="relative min-h-screen w-full bg-[#060E1F] text-slate-100 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
@@ -52,7 +111,7 @@ export default function Home() {
             If you are a British citizen, an EU national with 3+ years in the UK, or a Ukrainian refugee, you qualify for full university funding. Study flexible courses around your schedule. No upfront costs. We handle the paperwork.
           </p>
 
-          {/* Core Benefit Pillars (Alex Hormozi Style) */}
+          {/* Core Benefit Pillars */}
           <div className="flex flex-col gap-4 my-2">
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
@@ -79,21 +138,49 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Primary CTA Button */}
+          {/* Primary CTA — Voice Call */}
           <div className="mt-4">
-            <PopupButton
-              id="I4K8suXl"
-              size={100}
-              onSubmit={handleFormSubmit}
-              className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] font-bold px-8 py-4 rounded-lg shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-base md:text-lg cursor-pointer"
+            <button
+              onClick={handleClick}
+              disabled={isBusy}
+              className={`group inline-flex items-center justify-center gap-3 font-bold px-8 py-4 rounded-lg shadow-lg transition-all duration-200 text-base md:text-lg cursor-pointer disabled:cursor-wait disabled:opacity-80 ${
+                isLive
+                  ? "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 text-white shadow-red-500/20 hover:shadow-red-500/30"
+                  : "bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-[#060E1F] shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]"
+              }`}
             >
-              See If You Qualify
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </PopupButton>
+              {callState === "connecting" && (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Connecting…
+                </>
+              )}
+              {callState === "ending" && (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Ending…
+                </>
+              )}
+              {callState === "live" && (
+                <>
+                  <PhoneOff className="w-5 h-5" />
+                  End Call
+                </>
+              )}
+              {callState === "idle" && (
+                <>
+                  <Phone className="w-5 h-5 transition-transform group-hover:rotate-12" />
+                  Talk To An Advisor Now
+                </>
+              )}
+            </button>
             <p className="text-xs text-slate-400 mt-3 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-500/60" />
-              Takes only 2 minutes • Completely free advisory
+              Free 2-minute eligibility call • No commitment
             </p>
+            {errorMsg && (
+              <p className="text-xs text-red-400 mt-2">{errorMsg}</p>
+            )}
           </div>
         </div>
 
